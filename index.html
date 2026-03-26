@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Steganography Demo</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    min-height: 100vh;
+    padding: 2rem;
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 0.5rem;
+    font-size: 2rem;
+    color: #fff;
+  }
+  .subtitle {
+    text-align: center;
+    color: #888;
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .panel {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .panel h2 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: #ccc;
+  }
+  .image-area {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .image-box {
+    flex: 1;
+    min-width: 280px;
+    text-align: center;
+  }
+  .image-box label {
+    display: block;
+    font-size: 0.85rem;
+    color: #888;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .image-box canvas {
+    max-width: 100%;
+    border: 1px solid #333;
+    border-radius: 8px;
+    background: #111;
+    cursor: pointer;
+  }
+  .btn-row {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+  button, .file-label {
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.15s;
+  }
+  .file-label {
+    display: inline-block;
+    background: #2a2a2a;
+    color: #e0e0e0;
+    border: 1px solid #444;
+  }
+  .file-label:hover { background: #333; }
+  input[type="file"] { display: none; }
+  .btn-encode {
+    background: #2563eb;
+    color: #fff;
+  }
+  .btn-encode:hover { background: #1d4ed8; }
+  .btn-decode {
+    background: #059669;
+    color: #fff;
+  }
+  .btn-decode:hover { background: #047857; }
+  .btn-download {
+    background: #7c3aed;
+    color: #fff;
+  }
+  .btn-download:hover { background: #6d28d9; }
+  .btn-secondary {
+    background: #2a2a2a;
+    color: #e0e0e0;
+    border: 1px solid #444;
+  }
+  .btn-secondary:hover { background: #333; }
+  textarea {
+    width: 100%;
+    min-height: 80px;
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: #e0e0e0;
+    padding: 0.75rem;
+    font-family: inherit;
+    font-size: 0.9rem;
+    resize: vertical;
+    margin-bottom: 0.75rem;
+  }
+  textarea:focus { outline: none; border-color: #2563eb; }
+  .status {
+    margin-top: 0.75rem;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    display: none;
+  }
+  .status.info { display: block; background: #1e3a5f; color: #93c5fd; }
+  .status.success { display: block; background: #14532d; color: #86efac; }
+  .status.error { display: block; background: #450a0a; color: #fca5a5; }
+  .capacity {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 0.5rem;
+  }
+  .how-it-works {
+    font-size: 0.85rem;
+    color: #777;
+    line-height: 1.6;
+  }
+  .how-it-works code {
+    background: #222;
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-size: 0.8rem;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>LSB Steganography</h1>
+  <p class="subtitle">Hide secret messages inside images by modifying the least significant bit of each pixel</p>
+
+  <!-- Image Panel -->
+  <div class="panel">
+    <h2>Images</h2>
+    <div class="image-area">
+      <div class="image-box">
+        <label>Source Image</label>
+        <canvas id="srcCanvas" width="400" height="300"></canvas>
+        <div class="btn-row" style="justify-content: center;">
+          <label class="file-label" for="srcUpload">Upload Image</label>
+          <input type="file" id="srcUpload" accept="image/*">
+          <button class="btn-secondary" onclick="loadDefault()">Default Image</button>
+        </div>
+        <div class="capacity" id="capacityInfo"></div>
+      </div>
+      <div class="image-box">
+        <label>Output Image</label>
+        <canvas id="outCanvas" width="400" height="300"></canvas>
+        <div class="btn-row" style="justify-content: center;">
+          <label class="file-label" for="stegoUpload">Upload Stego Image</label>
+          <input type="file" id="stegoUpload" accept="image/*">
+          <button class="btn-download" id="downloadBtn" onclick="downloadImage()" disabled>Download</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message Panel -->
+  <div class="panel">
+    <h2>Message</h2>
+    <textarea id="messageInput" placeholder="Enter your secret message here..."></textarea>
+    <div class="btn-row">
+      <button class="btn-encode" onclick="encode()">Encode Message</button>
+      <button class="btn-decode" onclick="decode()">Decode Message</button>
+    </div>
+    <div class="status" id="status"></div>
+  </div>
+
+  <!-- Info Panel -->
+  <div class="panel">
+    <h2>How It Works</h2>
+    <div class="how-it-works">
+      <p>This tool hides text in an image using <strong>Least Significant Bit (LSB)</strong> steganography.</p>
+      <br>
+      <p><strong>Encoding:</strong> Each character of your message is converted to its 8-bit binary representation.
+      Each bit replaces the LSB of one color channel (R, G, or B) of successive pixels.
+      A 32-bit length header is stored first, followed by the message bits.
+      The change to each pixel is at most &plusmn;1 in one channel &mdash; invisible to the naked eye.</p>
+      <br>
+      <p><strong>Decoding:</strong> The LSBs are read back in the same order. The length header tells us how many
+      characters to extract, then those bits are reassembled into text.</p>
+      <br>
+      <p><strong>Capacity:</strong> Each pixel stores 3 bits (one per RGB channel). An image of <code>W &times; H</code> pixels
+      can hold <code>floor(W &times; H &times; 3 / 8) - 4</code> characters (minus 4 bytes for the length header).</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const srcCanvas = document.getElementById('srcCanvas');
+const outCanvas = document.getElementById('outCanvas');
+const srcCtx = srcCanvas.getContext('2d');
+const outCtx = outCanvas.getContext('2d');
+const messageInput = document.getElementById('messageInput');
+const statusEl = document.getElementById('status');
+const downloadBtn = document.getElementById('downloadBtn');
+const capacityEl = document.getElementById('capacityInfo');
+
+let sourceImageData = null;
+
+function setStatus(msg, type) {
+  statusEl.textContent = msg;
+  statusEl.className = 'status ' + type;
+}
+
+function updateCapacity(w, h) {
+  const bits = w * h * 3;
+  const chars = Math.floor(bits / 8) - 4;
+  capacityEl.textContent = `Image: ${w} x ${h} — capacity: ~${chars.toLocaleString()} characters`;
+}
+
+function loadImageToCanvas(img, canvas, ctx) {
+  canvas.width = img.naturalWidth || img.width;
+  canvas.height = img.naturalHeight || img.height;
+  ctx.drawImage(img, 0, 0);
+  return ctx.getImageData(0, 0, canvas.width, canvas.height);
+}
+
+function loadDefault() {
+  // Generate a simple sunflower-ish image procedurally
+  const w = 400, h = 300;
+  srcCanvas.width = w;
+  srcCanvas.height = h;
+
+  // Sky gradient
+  const grad = srcCtx.createLinearGradient(0, 0, 0, h);
+  grad.addColorStop(0, '#4a90d9');
+  grad.addColorStop(0.6, '#87ceeb');
+  grad.addColorStop(0.6, '#228b22');
+  grad.addColorStop(1, '#1a6b1a');
+  srcCtx.fillStyle = grad;
+  srcCtx.fillRect(0, 0, w, h);
+
+  // Stem
+  srcCtx.strokeStyle = '#2d5a1e';
+  srcCtx.lineWidth = 6;
+  srcCtx.beginPath();
+  srcCtx.moveTo(200, 180);
+  srcCtx.quadraticCurveTo(195, 230, 200, 300);
+  srcCtx.stroke();
+
+  // Leaves
+  srcCtx.fillStyle = '#2d8a2d';
+  srcCtx.beginPath();
+  srcCtx.ellipse(178, 230, 25, 8, -0.5, 0, Math.PI * 2);
+  srcCtx.fill();
+  srcCtx.beginPath();
+  srcCtx.ellipse(222, 250, 25, 8, 0.4, 0, Math.PI * 2);
+  srcCtx.fill();
+
+  // Petals
+  const cx = 200, cy = 120, petalCount = 14;
+  for (let i = 0; i < petalCount; i++) {
+    const angle = (i / petalCount) * Math.PI * 2;
+    srcCtx.save();
+    srcCtx.translate(cx, cy);
+    srcCtx.rotate(angle);
+    srcCtx.fillStyle = i % 2 === 0 ? '#ffd700' : '#ffb800';
+    srcCtx.beginPath();
+    srcCtx.ellipse(0, -40, 12, 28, 0, 0, Math.PI * 2);
+    srcCtx.fill();
+    srcCtx.restore();
+  }
+
+  // Center
+  const cgrad = srcCtx.createRadialGradient(cx, cy, 0, cx, cy, 22);
+  cgrad.addColorStop(0, '#8B4513');
+  cgrad.addColorStop(0.7, '#5a2d0c');
+  cgrad.addColorStop(1, '#3a1a00');
+  srcCtx.fillStyle = cgrad;
+  srcCtx.beginPath();
+  srcCtx.arc(cx, cy, 22, 0, Math.PI * 2);
+  srcCtx.fill();
+
+  // Seeds texture
+  for (let i = 0; i < 30; i++) {
+    const a = Math.random() * Math.PI * 2;
+    const r = Math.random() * 18;
+    srcCtx.fillStyle = 'rgba(0,0,0,0.3)';
+    srcCtx.beginPath();
+    srcCtx.arc(cx + Math.cos(a) * r, cy + Math.sin(a) * r, 1.5, 0, Math.PI * 2);
+    srcCtx.fill();
+  }
+
+  sourceImageData = srcCtx.getImageData(0, 0, w, h);
+  updateCapacity(w, h);
+
+  // Clear output
+  outCanvas.width = w;
+  outCanvas.height = h;
+  outCtx.fillStyle = '#111';
+  outCtx.fillRect(0, 0, w, h);
+  outCtx.fillStyle = '#444';
+  outCtx.font = '14px sans-serif';
+  outCtx.textAlign = 'center';
+  outCtx.fillText('Encoded image will appear here', w / 2, h / 2);
+  downloadBtn.disabled = true;
+}
+
+function handleImageUpload(file, canvas, ctx, cb) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function() {
+      const data = loadImageToCanvas(img, canvas, ctx);
+      cb(data, canvas.width, canvas.height);
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+document.getElementById('srcUpload').addEventListener('change', function(e) {
+  if (e.target.files[0]) {
+    handleImageUpload(e.target.files[0], srcCanvas, srcCtx, function(data, w, h) {
+      sourceImageData = data;
+      updateCapacity(w, h);
+      setStatus('', '');
+    });
+  }
+});
+
+document.getElementById('stegoUpload').addEventListener('change', function(e) {
+  if (e.target.files[0]) {
+    handleImageUpload(e.target.files[0], outCanvas, outCtx, function() {
+      downloadBtn.disabled = false;
+      setStatus('Stego image loaded into output. Click Decode to extract the message.', 'info');
+    });
+  }
+});
+
+function encode() {
+  if (!sourceImageData) {
+    setStatus('Please load a source image first.', 'error');
+    return;
+  }
+  const msg = messageInput.value;
+  if (!msg) {
+    setStatus('Please enter a message to encode.', 'error');
+    return;
+  }
+
+  const encoder = new TextEncoder();
+  const msgBytes = encoder.encode(msg);
+  const msgLen = msgBytes.length;
+
+  const w = srcCanvas.width, h = srcCanvas.height;
+  const totalBits = w * h * 3;
+  const neededBits = (4 + msgLen) * 8; // 4 bytes for length header
+
+  if (neededBits > totalBits) {
+    setStatus(`Message too long. Need ${neededBits} bits but image only has ${totalBits} bits of capacity.`, 'error');
+    return;
+  }
+
+  // Clone source image data
+  outCanvas.width = w;
+  outCanvas.height = h;
+  const outData = outCtx.createImageData(w, h);
+  const src = sourceImageData.data;
+  const dst = outData.data;
+  for (let i = 0; i < src.length; i++) {
+    dst[i] = src[i];
+  }
+
+  // Build bit stream: 32-bit length (big-endian) + message bytes
+  const allBytes = new Uint8Array(4 + msgLen);
+  allBytes[0] = (msgLen >> 24) & 0xff;
+  allBytes[1] = (msgLen >> 16) & 0xff;
+  allBytes[2] = (msgLen >> 8) & 0xff;
+  allBytes[3] = msgLen & 0xff;
+  allBytes.set(msgBytes, 4);
+
+  let bitIdx = 0;
+  for (let i = 0; i < allBytes.length; i++) {
+    for (let b = 7; b >= 0; b--) {
+      const bit = (allBytes[i] >> b) & 1;
+      // Map bitIdx to pixel channel: skip alpha (every 4th byte)
+      const pixelIdx = Math.floor(bitIdx / 3);
+      const channelOffset = bitIdx % 3; // 0=R, 1=G, 2=B
+      const dataIdx = pixelIdx * 4 + channelOffset;
+
+      dst[dataIdx] = (dst[dataIdx] & 0xfe) | bit;
+      bitIdx++;
+    }
+  }
+
+  outCtx.putImageData(outData, 0, 0);
+  downloadBtn.disabled = false;
+  setStatus(`Encoded ${msgLen} characters (${neededBits} bits) into the image.`, 'success');
+}
+
+function decode() {
+  const w = outCanvas.width, h = outCanvas.height;
+  if (w === 0 || h === 0) {
+    setStatus('No output image to decode from.', 'error');
+    return;
+  }
+
+  const imgData = outCtx.getImageData(0, 0, w, h);
+  const data = imgData.data;
+  const totalBits = w * h * 3;
+
+  if (totalBits < 32) {
+    setStatus('Image too small to contain a message.', 'error');
+    return;
+  }
+
+  // Read bits from LSBs
+  function readBits(startBit, count) {
+    const bytes = new Uint8Array(Math.ceil(count / 8));
+    for (let i = 0; i < count; i++) {
+      const bitIdx = startBit + i;
+      const pixelIdx = Math.floor(bitIdx / 3);
+      const channelOffset = bitIdx % 3;
+      const dataIdx = pixelIdx * 4 + channelOffset;
+      const bit = data[dataIdx] & 1;
+      bytes[Math.floor(i / 8)] |= (bit << (7 - (i % 8)));
+    }
+    return bytes;
+  }
+
+  // Read 4-byte length header
+  const lenBytes = readBits(0, 32);
+  const msgLen = (lenBytes[0] << 24) | (lenBytes[1] << 16) | (lenBytes[2] << 8) | lenBytes[3];
+
+  if (msgLen <= 0 || msgLen > Math.floor((totalBits - 32) / 8)) {
+    setStatus('No valid hidden message found (invalid length header).', 'error');
+    messageInput.value = '';
+    return;
+  }
+
+  const msgBytes = readBits(32, msgLen * 8);
+  const decoder = new TextDecoder();
+  const msg = decoder.decode(msgBytes);
+
+  messageInput.value = msg;
+  setStatus(`Decoded ${msgLen} characters from the image.`, 'success');
+}
+
+function downloadImage() {
+  const link = document.createElement('a');
+  link.download = 'stego_image.png';
+  link.href = outCanvas.toDataURL('image/png');
+  link.click();
+}
+
+// Load default on start
+loadDefault();
+</script>
+
+</body>
+</html>
