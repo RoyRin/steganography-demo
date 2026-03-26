@@ -11,75 +11,112 @@
     background: #0f0f0f;
     color: #e0e0e0;
     min-height: 100vh;
-    padding: 2rem;
+    padding: 2rem 1rem;
   }
-  h1 {
-    text-align: center;
-    margin-bottom: 0.5rem;
-    font-size: 2rem;
-    color: #fff;
-  }
-  .subtitle {
-    text-align: center;
-    color: #888;
-    margin-bottom: 2rem;
-    font-size: 0.95rem;
-  }
-  .container {
-    max-width: 900px;
-    margin: 0 auto;
-  }
+  .container { max-width: 1100px; margin: 0 auto; }
+  h1 { text-align: center; margin-bottom: 0.3rem; font-size: 2rem; color: #fff; }
+  .subtitle { text-align: center; color: #888; margin-bottom: 1.5rem; font-size: 0.95rem; }
+
+  /* Explanation panel */
   .panel {
     background: #1a1a1a;
     border: 1px solid #333;
     border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.25rem;
   }
-  .panel h2 {
-    font-size: 1.1rem;
+  .panel h2 { font-size: 1.05rem; margin-bottom: 0.75rem; color: #ccc; }
+  .how-it-works { font-size: 0.85rem; color: #999; line-height: 1.6; }
+  .how-it-works code {
+    background: #222; padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.8rem;
+  }
+  .how-it-works strong { color: #bbb; }
+
+  /* Row panels */
+  .row-panel {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .row-panel h2 {
+    font-size: 1rem;
     margin-bottom: 1rem;
     color: #ccc;
-  }
-  .image-area {
     display: flex;
-    gap: 1.5rem;
-    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
   }
-  .image-box {
-    flex: 1;
-    min-width: 280px;
-    text-align: center;
-  }
-  .image-box label {
-    display: block;
-    font-size: 0.85rem;
-    color: #888;
-    margin-bottom: 0.5rem;
+  .row-label {
+    display: inline-block;
+    font-size: 0.7rem;
+    padding: 0.2em 0.6em;
+    border-radius: 4px;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
-  .image-box canvas {
+  .row-label.encode { background: #1e3a5f; color: #60a5fa; }
+  .row-label.decode { background: #14532d; color: #86efac; }
+
+  .row-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .col {
+    flex: 1;
+    min-width: 200px;
+    text-align: center;
+  }
+  .col-mid {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .col label {
+    display: block;
+    font-size: 0.75rem;
+    color: #666;
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  canvas {
     max-width: 100%;
+    width: 100%;
     border: 1px solid #333;
     border-radius: 8px;
     background: #111;
-    cursor: pointer;
   }
-  .btn-row {
-    display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-    margin-top: 1rem;
+  textarea {
+    width: 100%;
+    min-height: 100px;
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: #e0e0e0;
+    padding: 0.65rem;
+    font-family: inherit;
+    font-size: 0.85rem;
+    resize: vertical;
   }
+  textarea:focus { outline: none; border-color: #2563eb; }
+
+  /* Buttons */
   button, .file-label {
-    padding: 0.6rem 1.2rem;
+    padding: 0.55rem 1rem;
     border: none;
     border-radius: 8px;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     cursor: pointer;
     font-weight: 500;
     transition: background 0.15s;
+    white-space: nowrap;
   }
   .file-label {
     display: inline-block;
@@ -89,66 +126,56 @@
   }
   .file-label:hover { background: #333; }
   input[type="file"] { display: none; }
-  .btn-encode {
-    background: #2563eb;
-    color: #fff;
-  }
+  .btn-encode { background: #2563eb; color: #fff; }
   .btn-encode:hover { background: #1d4ed8; }
-  .btn-decode {
-    background: #059669;
-    color: #fff;
-  }
+  .btn-decode { background: #059669; color: #fff; }
   .btn-decode:hover { background: #047857; }
-  .btn-download {
-    background: #7c3aed;
-    color: #fff;
-  }
+  .btn-download { background: #7c3aed; color: #fff; }
   .btn-download:hover { background: #6d28d9; }
-  .btn-secondary {
-    background: #2a2a2a;
-    color: #e0e0e0;
-    border: 1px solid #444;
-  }
+  .btn-transfer { background: #d97706; color: #fff; }
+  .btn-transfer:hover { background: #b45309; }
+  .btn-secondary { background: #2a2a2a; color: #e0e0e0; border: 1px solid #444; }
   .btn-secondary:hover { background: #333; }
-  textarea {
-    width: 100%;
-    min-height: 80px;
-    background: #111;
-    border: 1px solid #333;
-    border-radius: 8px;
-    color: #e0e0e0;
-    padding: 0.75rem;
-    font-family: inherit;
-    font-size: 0.9rem;
-    resize: vertical;
-    margin-bottom: 0.75rem;
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .arrow {
+    font-size: 1.5rem;
+    color: #555;
+    user-select: none;
   }
-  textarea:focus { outline: none; border-color: #2563eb; }
+  .btn-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.6rem;
+    justify-content: center;
+  }
   .status {
-    margin-top: 0.75rem;
-    padding: 0.6rem 1rem;
+    margin-top: 0.6rem;
+    padding: 0.5rem 0.75rem;
     border-radius: 8px;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     display: none;
   }
   .status.info { display: block; background: #1e3a5f; color: #93c5fd; }
   .status.success { display: block; background: #14532d; color: #86efac; }
   .status.error { display: block; background: #450a0a; color: #fca5a5; }
   .capacity {
-    font-size: 0.8rem;
-    color: #666;
-    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    color: #555;
+    margin-top: 0.3rem;
   }
-  .how-it-works {
-    font-size: 0.85rem;
-    color: #777;
-    line-height: 1.6;
+
+  /* Transfer button between rows */
+  .transfer-row {
+    text-align: center;
+    margin-bottom: 1.25rem;
   }
-  .how-it-works code {
-    background: #222;
-    padding: 0.15em 0.4em;
-    border-radius: 4px;
-    font-size: 0.8rem;
+
+  @media (max-width: 700px) {
+    .row-content { flex-direction: column; }
+    .arrow { transform: rotate(90deg); }
+    .col { min-width: unset; }
   }
 </style>
 </head>
@@ -158,84 +185,124 @@
   <h1>LSB Steganography</h1>
   <p class="subtitle">Hide secret messages inside images by modifying the least significant bit of each pixel</p>
 
-  <!-- Image Panel -->
-  <div class="panel">
-    <h2>Images</h2>
-    <div class="image-area">
-      <div class="image-box">
-        <label>Source Image</label>
-        <canvas id="srcCanvas" width="400" height="300"></canvas>
-        <div class="btn-row" style="justify-content: center;">
-          <label class="file-label" for="srcUpload">Upload Image</label>
-          <input type="file" id="srcUpload" accept="image/*">
-          <button class="btn-secondary" onclick="loadDefault()">Default Image</button>
-        </div>
-        <div class="capacity" id="capacityInfo"></div>
-      </div>
-      <div class="image-box">
-        <label>Output Image</label>
-        <canvas id="outCanvas" width="400" height="300"></canvas>
-        <div class="btn-row" style="justify-content: center;">
-          <label class="file-label" for="stegoUpload">Upload Stego Image</label>
-          <input type="file" id="stegoUpload" accept="image/*">
-          <button class="btn-download" id="downloadBtn" onclick="downloadImage()" disabled>Download</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Message Panel -->
-  <div class="panel">
-    <h2>Message</h2>
-    <textarea id="messageInput" placeholder="Enter your secret message here..."></textarea>
-    <div class="btn-row">
-      <button class="btn-encode" onclick="encode()">Encode Message</button>
-      <button class="btn-decode" onclick="decode()">Decode Message</button>
-    </div>
-    <div class="status" id="status"></div>
-  </div>
-
-  <!-- Info Panel -->
+  <!-- Explanation -->
   <div class="panel">
     <h2>How It Works</h2>
     <div class="how-it-works">
-      <p>This tool hides text in an image using <strong>Least Significant Bit (LSB)</strong> steganography.</p>
-      <br>
-      <p><strong>Encoding:</strong> Each character of your message is converted to its 8-bit binary representation.
-      Each bit replaces the LSB of one color channel (R, G, or B) of successive pixels.
-      A 32-bit length header is stored first, followed by the message bits.
-      The change to each pixel is at most &plusmn;1 in one channel &mdash; invisible to the naked eye.</p>
-      <br>
-      <p><strong>Decoding:</strong> The LSBs are read back in the same order. The length header tells us how many
-      characters to extract, then those bits are reassembled into text.</p>
-      <br>
-      <p><strong>Capacity:</strong> Each pixel stores 3 bits (one per RGB channel). An image of <code>W &times; H</code> pixels
-      can hold <code>floor(W &times; H &times; 3 / 8) - 4</code> characters (minus 4 bytes for the length header).</p>
+      <p><strong>Encoding:</strong> Your message is converted to binary. Each bit replaces the least significant bit
+      of one color channel (R, G, or B) across successive pixels. A 32-bit length header is stored first.
+      The change to each pixel is at most &plusmn;1 &mdash; invisible to the naked eye.</p>
+      <p style="margin-top:0.4rem"><strong>Decoding:</strong> The LSBs are read back in order. The length header tells how many
+      bytes to extract, then those bits are reassembled into text.</p>
+      <p style="margin-top:0.4rem"><strong>Capacity:</strong> Each pixel stores 3 bits (one per RGB channel).
+      A <code>W&times;H</code> image holds <code>floor(W&times;H&times;3/8) - 4</code> bytes.</p>
     </div>
+  </div>
+
+  <!-- Row 1: Encode -->
+  <div class="row-panel">
+    <h2><span class="row-label encode">Encode</span> Hide a message in an image</h2>
+    <div class="row-content">
+      <div class="col">
+        <label>Source Image</label>
+        <canvas id="srcCanvas" width="400" height="300"></canvas>
+        <div class="btn-row">
+          <label class="file-label" for="srcUpload">Upload</label>
+          <input type="file" id="srcUpload" accept="image/*">
+          <button class="btn-secondary" onclick="loadDefault()">Reset Default</button>
+        </div>
+        <div class="capacity" id="capacityInfo"></div>
+      </div>
+      <div class="col" style="flex: 0.8;">
+        <label>Secret Message</label>
+        <textarea id="encodeInput" placeholder="Type your secret message here..."></textarea>
+        <div class="btn-row">
+          <button class="btn-encode" onclick="encode()">Encode &rarr;</button>
+        </div>
+      </div>
+      <div class="col">
+        <label>Stego Image (output)</label>
+        <canvas id="encOutCanvas" width="400" height="300"></canvas>
+        <div class="btn-row">
+          <button class="btn-download" id="downloadBtn" onclick="downloadImage()" disabled>Download PNG</button>
+        </div>
+      </div>
+    </div>
+    <div class="status" id="encodeStatus"></div>
+  </div>
+
+  <!-- Transfer button -->
+  <div class="transfer-row">
+    <button class="btn-transfer" id="transferBtn" onclick="transferImage()" disabled>
+      &darr;&darr; Load encoded image into decoder &darr;&darr;
+    </button>
+  </div>
+
+  <!-- Row 2: Decode -->
+  <div class="row-panel">
+    <h2><span class="row-label decode">Decode</span> Extract a hidden message from an image</h2>
+    <div class="row-content">
+      <div class="col">
+        <label>Stego Image (input)</label>
+        <canvas id="decInCanvas" width="400" height="300"></canvas>
+        <div class="btn-row">
+          <label class="file-label" for="stegoUpload">Upload Stego Image</label>
+          <input type="file" id="stegoUpload" accept="image/*">
+        </div>
+      </div>
+      <div class="col-mid">
+        <button class="btn-decode" id="decodeBtn" onclick="decode()" disabled>Decode &rarr;</button>
+      </div>
+      <div class="col">
+        <label>Extracted Message</label>
+        <textarea id="decodeOutput" placeholder="Decoded message will appear here..." readonly></textarea>
+      </div>
+    </div>
+    <div class="status" id="decodeStatus"></div>
   </div>
 </div>
 
 <script>
 const srcCanvas = document.getElementById('srcCanvas');
-const outCanvas = document.getElementById('outCanvas');
+const encOutCanvas = document.getElementById('encOutCanvas');
+const decInCanvas = document.getElementById('decInCanvas');
 const srcCtx = srcCanvas.getContext('2d');
-const outCtx = outCanvas.getContext('2d');
-const messageInput = document.getElementById('messageInput');
-const statusEl = document.getElementById('status');
+const encOutCtx = encOutCanvas.getContext('2d');
+const decInCtx = decInCanvas.getContext('2d');
+const encodeInput = document.getElementById('encodeInput');
+const decodeOutput = document.getElementById('decodeOutput');
+const encodeStatusEl = document.getElementById('encodeStatus');
+const decodeStatusEl = document.getElementById('decodeStatus');
 const downloadBtn = document.getElementById('downloadBtn');
+const transferBtn = document.getElementById('transferBtn');
+const decodeBtnEl = document.getElementById('decodeBtn');
 const capacityEl = document.getElementById('capacityInfo');
 
-let sourceImageData = null;
+const DEFAULT_IMAGE_URL = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZM5l8X6QUEX5rtVduEs3kIzynolsaJ94U4g&s';
 
-function setStatus(msg, type) {
-  statusEl.textContent = msg;
-  statusEl.className = 'status ' + type;
+let sourceImageData = null;
+let hasEncodedImage = false;
+let hasDecodeImage = false;
+
+function setStatus(el, msg, type) {
+  el.textContent = msg;
+  el.className = 'status ' + type;
 }
 
 function updateCapacity(w, h) {
-  const bits = w * h * 3;
-  const chars = Math.floor(bits / 8) - 4;
-  capacityEl.textContent = `Image: ${w} x ${h} — capacity: ~${chars.toLocaleString()} characters`;
+  const chars = Math.floor(w * h * 3 / 8) - 4;
+  capacityEl.textContent = `${w} x ${h} — capacity: ~${chars.toLocaleString()} bytes`;
+}
+
+function drawPlaceholder(canvas, ctx, text) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#111';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#444';
+  ctx.font = '13px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, canvas.width / 2, canvas.height / 2);
 }
 
 function loadImageToCanvas(img, canvas, ctx) {
@@ -246,84 +313,50 @@ function loadImageToCanvas(img, canvas, ctx) {
 }
 
 function loadDefault() {
-  // Generate a simple sunflower-ish image procedurally
-  const w = 400, h = 300;
-  srcCanvas.width = w;
-  srcCanvas.height = h;
-
-  // Sky gradient
-  const grad = srcCtx.createLinearGradient(0, 0, 0, h);
-  grad.addColorStop(0, '#4a90d9');
-  grad.addColorStop(0.6, '#87ceeb');
-  grad.addColorStop(0.6, '#228b22');
-  grad.addColorStop(1, '#1a6b1a');
-  srcCtx.fillStyle = grad;
-  srcCtx.fillRect(0, 0, w, h);
-
-  // Stem
-  srcCtx.strokeStyle = '#2d5a1e';
-  srcCtx.lineWidth = 6;
-  srcCtx.beginPath();
-  srcCtx.moveTo(200, 180);
-  srcCtx.quadraticCurveTo(195, 230, 200, 300);
-  srcCtx.stroke();
-
-  // Leaves
-  srcCtx.fillStyle = '#2d8a2d';
-  srcCtx.beginPath();
-  srcCtx.ellipse(178, 230, 25, 8, -0.5, 0, Math.PI * 2);
-  srcCtx.fill();
-  srcCtx.beginPath();
-  srcCtx.ellipse(222, 250, 25, 8, 0.4, 0, Math.PI * 2);
-  srcCtx.fill();
-
-  // Petals
-  const cx = 200, cy = 120, petalCount = 14;
-  for (let i = 0; i < petalCount; i++) {
-    const angle = (i / petalCount) * Math.PI * 2;
-    srcCtx.save();
-    srcCtx.translate(cx, cy);
-    srcCtx.rotate(angle);
-    srcCtx.fillStyle = i % 2 === 0 ? '#ffd700' : '#ffb800';
-    srcCtx.beginPath();
-    srcCtx.ellipse(0, -40, 12, 28, 0, 0, Math.PI * 2);
-    srcCtx.fill();
-    srcCtx.restore();
-  }
-
-  // Center
-  const cgrad = srcCtx.createRadialGradient(cx, cy, 0, cx, cy, 22);
-  cgrad.addColorStop(0, '#8B4513');
-  cgrad.addColorStop(0.7, '#5a2d0c');
-  cgrad.addColorStop(1, '#3a1a00');
-  srcCtx.fillStyle = cgrad;
-  srcCtx.beginPath();
-  srcCtx.arc(cx, cy, 22, 0, Math.PI * 2);
-  srcCtx.fill();
-
-  // Seeds texture
-  for (let i = 0; i < 30; i++) {
-    const a = Math.random() * Math.PI * 2;
-    const r = Math.random() * 18;
-    srcCtx.fillStyle = 'rgba(0,0,0,0.3)';
-    srcCtx.beginPath();
-    srcCtx.arc(cx + Math.cos(a) * r, cy + Math.sin(a) * r, 1.5, 0, Math.PI * 2);
-    srcCtx.fill();
-  }
-
-  sourceImageData = srcCtx.getImageData(0, 0, w, h);
-  updateCapacity(w, h);
-
-  // Clear output
-  outCanvas.width = w;
-  outCanvas.height = h;
-  outCtx.fillStyle = '#111';
-  outCtx.fillRect(0, 0, w, h);
-  outCtx.fillStyle = '#444';
-  outCtx.font = '14px sans-serif';
-  outCtx.textAlign = 'center';
-  outCtx.fillText('Encoded image will appear here', w / 2, h / 2);
-  downloadBtn.disabled = true;
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = function() {
+    sourceImageData = loadImageToCanvas(img, srcCanvas, srcCtx);
+    updateCapacity(srcCanvas.width, srcCanvas.height);
+    // Reset encode output
+    encOutCanvas.width = srcCanvas.width;
+    encOutCanvas.height = srcCanvas.height;
+    drawPlaceholder(encOutCanvas, encOutCtx, 'Encoded image will appear here');
+    hasEncodedImage = false;
+    downloadBtn.disabled = true;
+    transferBtn.disabled = true;
+    setStatus(encodeStatusEl, '', '');
+  };
+  img.onerror = function() {
+    // Fallback: draw a procedural sunflower
+    const w = 400, h = 300;
+    srcCanvas.width = w; srcCanvas.height = h;
+    const grad = srcCtx.createLinearGradient(0, 0, 0, h);
+    grad.addColorStop(0, '#4a90d9'); grad.addColorStop(0.6, '#87ceeb');
+    grad.addColorStop(0.6, '#228b22'); grad.addColorStop(1, '#1a6b1a');
+    srcCtx.fillStyle = grad; srcCtx.fillRect(0, 0, w, h);
+    srcCtx.strokeStyle = '#2d5a1e'; srcCtx.lineWidth = 6;
+    srcCtx.beginPath(); srcCtx.moveTo(200,180); srcCtx.quadraticCurveTo(195,230,200,300); srcCtx.stroke();
+    const cx = 200, cy = 120;
+    for (let i = 0; i < 14; i++) {
+      const a = (i/14)*Math.PI*2;
+      srcCtx.save(); srcCtx.translate(cx,cy); srcCtx.rotate(a);
+      srcCtx.fillStyle = i%2===0?'#ffd700':'#ffb800';
+      srcCtx.beginPath(); srcCtx.ellipse(0,-40,12,28,0,0,Math.PI*2); srcCtx.fill();
+      srcCtx.restore();
+    }
+    const cg = srcCtx.createRadialGradient(cx,cy,0,cx,cy,22);
+    cg.addColorStop(0,'#8B4513'); cg.addColorStop(1,'#3a1a00');
+    srcCtx.fillStyle = cg; srcCtx.beginPath(); srcCtx.arc(cx,cy,22,0,Math.PI*2); srcCtx.fill();
+    sourceImageData = srcCtx.getImageData(0, 0, w, h);
+    updateCapacity(w, h);
+    encOutCanvas.width = w; encOutCanvas.height = h;
+    drawPlaceholder(encOutCanvas, encOutCtx, 'Encoded image will appear here');
+    hasEncodedImage = false;
+    downloadBtn.disabled = true;
+    transferBtn.disabled = true;
+  };
+  img.src = DEFAULT_IMAGE_URL;
 }
 
 function handleImageUpload(file, canvas, ctx, cb) {
@@ -344,28 +377,34 @@ document.getElementById('srcUpload').addEventListener('change', function(e) {
     handleImageUpload(e.target.files[0], srcCanvas, srcCtx, function(data, w, h) {
       sourceImageData = data;
       updateCapacity(w, h);
-      setStatus('', '');
+      encOutCanvas.width = w; encOutCanvas.height = h;
+      drawPlaceholder(encOutCanvas, encOutCtx, 'Encoded image will appear here');
+      hasEncodedImage = false;
+      downloadBtn.disabled = true;
+      transferBtn.disabled = true;
+      setStatus(encodeStatusEl, '', '');
     });
   }
 });
 
 document.getElementById('stegoUpload').addEventListener('change', function(e) {
   if (e.target.files[0]) {
-    handleImageUpload(e.target.files[0], outCanvas, outCtx, function() {
-      downloadBtn.disabled = false;
-      setStatus('Stego image loaded into output. Click Decode to extract the message.', 'info');
+    handleImageUpload(e.target.files[0], decInCanvas, decInCtx, function() {
+      hasDecodeImage = true;
+      decodeBtnEl.disabled = false;
+      setStatus(decodeStatusEl, 'Stego image loaded. Click Decode to extract the message.', 'info');
     });
   }
 });
 
 function encode() {
   if (!sourceImageData) {
-    setStatus('Please load a source image first.', 'error');
+    setStatus(encodeStatusEl, 'Please load a source image first.', 'error');
     return;
   }
-  const msg = messageInput.value;
+  const msg = encodeInput.value;
   if (!msg) {
-    setStatus('Please enter a message to encode.', 'error');
+    setStatus(encodeStatusEl, 'Please enter a message to encode.', 'error');
     return;
   }
 
@@ -375,24 +414,20 @@ function encode() {
 
   const w = srcCanvas.width, h = srcCanvas.height;
   const totalBits = w * h * 3;
-  const neededBits = (4 + msgLen) * 8; // 4 bytes for length header
+  const neededBits = (4 + msgLen) * 8;
 
   if (neededBits > totalBits) {
-    setStatus(`Message too long. Need ${neededBits} bits but image only has ${totalBits} bits of capacity.`, 'error');
+    setStatus(encodeStatusEl, `Message too long! Need ${neededBits} bits but image only has ${totalBits}.`, 'error');
     return;
   }
 
-  // Clone source image data
-  outCanvas.width = w;
-  outCanvas.height = h;
-  const outData = outCtx.createImageData(w, h);
+  encOutCanvas.width = w;
+  encOutCanvas.height = h;
+  const outData = encOutCtx.createImageData(w, h);
   const src = sourceImageData.data;
   const dst = outData.data;
-  for (let i = 0; i < src.length; i++) {
-    dst[i] = src[i];
-  }
+  for (let i = 0; i < src.length; i++) dst[i] = src[i];
 
-  // Build bit stream: 32-bit length (big-endian) + message bytes
   const allBytes = new Uint8Array(4 + msgLen);
   allBytes[0] = (msgLen >> 24) & 0xff;
   allBytes[1] = (msgLen >> 16) & 0xff;
@@ -404,38 +439,37 @@ function encode() {
   for (let i = 0; i < allBytes.length; i++) {
     for (let b = 7; b >= 0; b--) {
       const bit = (allBytes[i] >> b) & 1;
-      // Map bitIdx to pixel channel: skip alpha (every 4th byte)
       const pixelIdx = Math.floor(bitIdx / 3);
-      const channelOffset = bitIdx % 3; // 0=R, 1=G, 2=B
+      const channelOffset = bitIdx % 3;
       const dataIdx = pixelIdx * 4 + channelOffset;
-
       dst[dataIdx] = (dst[dataIdx] & 0xfe) | bit;
       bitIdx++;
     }
   }
 
-  outCtx.putImageData(outData, 0, 0);
+  encOutCtx.putImageData(outData, 0, 0);
+  hasEncodedImage = true;
   downloadBtn.disabled = false;
-  setStatus(`Encoded ${msgLen} characters (${neededBits} bits) into the image.`, 'success');
+  transferBtn.disabled = false;
+  setStatus(encodeStatusEl, `Encoded ${msgLen} bytes (${neededBits} bits used) into the image.`, 'success');
 }
 
 function decode() {
-  const w = outCanvas.width, h = outCanvas.height;
-  if (w === 0 || h === 0) {
-    setStatus('No output image to decode from.', 'error');
+  const w = decInCanvas.width, h = decInCanvas.height;
+  if (!hasDecodeImage || w === 0 || h === 0) {
+    setStatus(decodeStatusEl, 'No stego image loaded. Upload one or transfer from the encoder.', 'error');
     return;
   }
 
-  const imgData = outCtx.getImageData(0, 0, w, h);
+  const imgData = decInCtx.getImageData(0, 0, w, h);
   const data = imgData.data;
   const totalBits = w * h * 3;
 
   if (totalBits < 32) {
-    setStatus('Image too small to contain a message.', 'error');
+    setStatus(decodeStatusEl, 'Image too small to contain a message.', 'error');
     return;
   }
 
-  // Read bits from LSBs
   function readBits(startBit, count) {
     const bytes = new Uint8Array(Math.ceil(count / 8));
     for (let i = 0; i < count; i++) {
@@ -449,33 +483,43 @@ function decode() {
     return bytes;
   }
 
-  // Read 4-byte length header
   const lenBytes = readBits(0, 32);
   const msgLen = (lenBytes[0] << 24) | (lenBytes[1] << 16) | (lenBytes[2] << 8) | lenBytes[3];
 
   if (msgLen <= 0 || msgLen > Math.floor((totalBits - 32) / 8)) {
-    setStatus('No valid hidden message found (invalid length header).', 'error');
-    messageInput.value = '';
+    setStatus(decodeStatusEl, 'No valid hidden message found (invalid length header).', 'error');
+    decodeOutput.value = '';
     return;
   }
 
   const msgBytes = readBits(32, msgLen * 8);
   const decoder = new TextDecoder();
-  const msg = decoder.decode(msgBytes);
+  decodeOutput.value = decoder.decode(msgBytes);
+  setStatus(decodeStatusEl, `Decoded ${msgLen} bytes from the image.`, 'success');
+}
 
-  messageInput.value = msg;
-  setStatus(`Decoded ${msgLen} characters from the image.`, 'success');
+function transferImage() {
+  if (!hasEncodedImage) return;
+  decInCanvas.width = encOutCanvas.width;
+  decInCanvas.height = encOutCanvas.height;
+  const imgData = encOutCtx.getImageData(0, 0, encOutCanvas.width, encOutCanvas.height);
+  decInCtx.putImageData(imgData, 0, 0);
+  hasDecodeImage = true;
+  decodeBtnEl.disabled = false;
+  decodeOutput.value = '';
+  setStatus(decodeStatusEl, 'Stego image loaded from encoder. Click Decode to extract.', 'info');
 }
 
 function downloadImage() {
   const link = document.createElement('a');
   link.download = 'stego_image.png';
-  link.href = outCanvas.toDataURL('image/png');
+  link.href = encOutCanvas.toDataURL('image/png');
   link.click();
 }
 
-// Load default on start
+// Init
 loadDefault();
+drawPlaceholder(decInCanvas, decInCtx, 'Upload or transfer a stego image');
 </script>
 
 </body>
