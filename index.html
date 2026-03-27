@@ -112,6 +112,21 @@
     border-radius: 8px;
     background: #111;
   }
+  .drop-zone {
+    position: relative;
+    border: 2px dashed transparent;
+    border-radius: 10px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .drop-zone.dragover {
+    border-color: #2563eb;
+    background: rgba(37, 99, 235, 0.08);
+  }
+  .drop-hint {
+    font-size: 0.7rem;
+    color: #555;
+    margin-top: 0.25rem;
+  }
   textarea {
     width: 100%;
     min-height: 100px;
@@ -325,7 +340,10 @@
       <div class="row-content">
         <div class="col">
           <label>Source Image</label>
-          <canvas id="srcCanvas" width="400" height="300"></canvas>
+          <div class="drop-zone" id="srcDropZone">
+            <canvas id="srcCanvas" width="400" height="300"></canvas>
+          </div>
+          <div class="drop-hint">Drag &amp; drop an image here</div>
           <div class="btn-row">
             <label class="file-label" for="srcUpload">Upload</label>
             <input type="file" id="srcUpload" accept="image/*">
@@ -363,7 +381,10 @@
       <div class="row-content">
         <div class="col">
           <label>Stego Image (input)</label>
-          <canvas id="decInCanvas" width="400" height="300"></canvas>
+          <div class="drop-zone" id="decDropZone">
+            <canvas id="decInCanvas" width="400" height="300"></canvas>
+          </div>
+          <div class="drop-hint">Drag &amp; drop a stego image here</div>
           <div class="btn-row">
             <label class="file-label" for="stegoUpload">Upload Stego Image</label>
             <input type="file" id="stegoUpload" accept="image/*">
@@ -709,27 +730,54 @@ function handleImageUpload(file, canvas, ctx, cb) {
   reader.readAsDataURL(file);
 }
 
+// ==================== DRAG AND DROP ====================
+function setupDropZone(zoneId, handler) {
+  const zone = document.getElementById(zoneId);
+  zone.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    zone.classList.add('dragover');
+  });
+  zone.addEventListener('dragleave', function() {
+    zone.classList.remove('dragover');
+  });
+  zone.addEventListener('drop', function(e) {
+    e.preventDefault();
+    zone.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      handler(file);
+    }
+  });
+}
+
+function loadSourceFile(file) {
+  handleImageUpload(file, srcCanvas, srcCtx, function(data, w, h) {
+    sourceImageData = data;
+    updateCapacity(w, h);
+    encOutCanvas.width = w; encOutCanvas.height = h;
+    drawPlaceholder(encOutCanvas, encOutCtx, 'Encoded image will appear here');
+    hasEncodedImage = false; downloadBtn.disabled = true; transferBtn.disabled = true;
+    setStatus(document.getElementById('encodeStatus'), '', '');
+  });
+}
+
+function loadStegoFile(file) {
+  handleImageUpload(file, decInCanvas, decInCtx, function() {
+    hasDecodeImage = true;
+    decodeBtnEl.disabled = false;
+    setStatus(document.getElementById('decodeStatus'), 'Stego image loaded. Click Decode.', 'info');
+  });
+}
+
+setupDropZone('srcDropZone', loadSourceFile);
+setupDropZone('decDropZone', loadStegoFile);
+
 document.getElementById('srcUpload').addEventListener('change', function(e) {
-  if (e.target.files[0]) {
-    handleImageUpload(e.target.files[0], srcCanvas, srcCtx, function(data, w, h) {
-      sourceImageData = data;
-      updateCapacity(w, h);
-      encOutCanvas.width = w; encOutCanvas.height = h;
-      drawPlaceholder(encOutCanvas, encOutCtx, 'Encoded image will appear here');
-      hasEncodedImage = false; downloadBtn.disabled = true; transferBtn.disabled = true;
-      setStatus(document.getElementById('encodeStatus'), '', '');
-    });
-  }
+  if (e.target.files[0]) loadSourceFile(e.target.files[0]);
 });
 
 document.getElementById('stegoUpload').addEventListener('change', function(e) {
-  if (e.target.files[0]) {
-    handleImageUpload(e.target.files[0], decInCanvas, decInCtx, function() {
-      hasDecodeImage = true;
-      decodeBtnEl.disabled = false;
-      setStatus(document.getElementById('decodeStatus'), 'Stego image loaded. Click Decode.', 'info');
-    });
-  }
+  if (e.target.files[0]) loadStegoFile(e.target.files[0]);
 });
 
 function imgEncode() {
