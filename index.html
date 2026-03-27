@@ -256,6 +256,34 @@
     word-break: break-all;
   }
 
+  /* Method selector dropdown */
+  .method-selector {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+  .method-selector label {
+    font-size: 0.85rem;
+    color: #888;
+    white-space: nowrap;
+  }
+  .method-selector select {
+    background: #1a1a1a;
+    border: 1px solid #444;
+    border-radius: 8px;
+    color: #e0e0e0;
+    padding: 0.55rem 1rem;
+    font-size: 0.9rem;
+    font-family: inherit;
+    cursor: pointer;
+    flex: 1;
+    max-width: 400px;
+  }
+  .method-selector select:focus { outline: none; border-color: #2563eb; }
+  .method-panel { display: none; }
+  .method-panel.active { display: block; }
+
   @media (max-width: 700px) {
     .row-content { flex-direction: column; }
     .col { min-width: unset; }
@@ -359,12 +387,21 @@
       <h2>How Text Steganography Works</h2>
       <div class="how-it-works">
         <p>Instead of hiding data in pixels, text steganography hides messages <em>within ordinary-looking text</em>.
-        The cover text reads naturally, but carries a hidden payload. Below are three techniques &mdash; from invisible to
-        linguistically creative.</p>
+        The cover text reads naturally, but carries a hidden payload. Select a technique below to try it out.</p>
       </div>
     </div>
 
+    <div class="method-selector">
+      <label for="textMethod">Method:</label>
+      <select id="textMethod" onchange="switchMethod(this.value)">
+        <option value="zwc">Zero-Width Characters &mdash; invisible Unicode between letters</option>
+        <option value="homo">Homoglyph Substitution &mdash; Latin/Cyrillic lookalike swaps</option>
+        <option value="syn">Synonym Substitution &mdash; word choice encodes bits</option>
+      </select>
+    </div>
+
     <!-- ===== Zero-Width Characters ===== -->
+    <div class="method-panel active" id="method-zwc">
     <div class="row-panel">
       <h2><span class="method-label zwc">Zero-Width Chars</span> Invisible characters between letters</h2>
       <div class="how-it-works" style="margin-bottom:1rem">
@@ -415,8 +452,10 @@
         <div class="status" id="zwcDecodeStatus"></div>
       </div>
     </div>
+    </div>
 
     <!-- ===== Homoglyph Substitution ===== -->
+    <div class="method-panel" id="method-homo">
     <div class="row-panel">
       <h2><span class="method-label homoglyph">Homoglyphs</span> Visually identical character swaps</h2>
       <div class="how-it-works" style="margin-bottom:1rem">
@@ -480,8 +519,10 @@
         <div class="status" id="homoDecodeStatus"></div>
       </div>
     </div>
+    </div>
 
     <!-- ===== Synonym Substitution ===== -->
+    <div class="method-panel" id="method-syn">
     <div class="row-panel">
       <h2><span class="method-label synonym">Synonyms</span> Word choice encodes hidden bits</h2>
       <div class="how-it-works" style="margin-bottom:1rem">
@@ -549,6 +590,7 @@
         <div class="status" id="synDecodeStatus"></div>
       </div>
     </div>
+    </div>
   </div>
 </div>
 
@@ -560,6 +602,11 @@ function switchTab(name) {
   });
   document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
+}
+
+function switchMethod(value) {
+  document.querySelectorAll('.method-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('method-' + value).classList.add('active');
 }
 
 // ==================== IMAGE STEGANOGRAPHY ====================
