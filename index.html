@@ -17,7 +17,30 @@
   h1 { text-align: center; margin-bottom: 0.3rem; font-size: 2rem; color: #fff; }
   .subtitle { text-align: center; color: #888; margin-bottom: 1.5rem; font-size: 0.95rem; }
 
-  /* Explanation panel */
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #333;
+  }
+  .tab {
+    padding: 0.75rem 1.5rem;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #888;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: color 0.15s, border-color 0.15s;
+    user-select: none;
+  }
+  .tab:hover { color: #ccc; }
+  .tab.active { color: #fff; border-bottom-color: #2563eb; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Panels */
   .panel {
     background: #1a1a1a;
     border: 1px solid #333;
@@ -66,11 +89,7 @@
     gap: 1rem;
     flex-wrap: wrap;
   }
-  .col {
-    flex: 1;
-    min-width: 200px;
-    text-align: center;
-  }
+  .col { flex: 1; min-width: 200px; text-align: center; }
   .col-mid {
     flex: 0 0 auto;
     display: flex;
@@ -78,7 +97,7 @@
     align-items: center;
     gap: 0.5rem;
   }
-  .col label {
+  .col label, .field-label {
     display: block;
     font-size: 0.75rem;
     color: #666;
@@ -138,11 +157,6 @@
   .btn-secondary:hover { background: #333; }
   button:disabled { opacity: 0.4; cursor: not-allowed; }
 
-  .arrow {
-    font-size: 1.5rem;
-    color: #555;
-    user-select: none;
-  }
   .btn-row {
     display: flex;
     gap: 0.5rem;
@@ -160,119 +174,401 @@
   .status.info { display: block; background: #1e3a5f; color: #93c5fd; }
   .status.success { display: block; background: #14532d; color: #86efac; }
   .status.error { display: block; background: #450a0a; color: #fca5a5; }
-  .capacity {
-    font-size: 0.75rem;
-    color: #555;
-    margin-top: 0.3rem;
-  }
+  .capacity { font-size: 0.75rem; color: #555; margin-top: 0.3rem; }
+  .transfer-row { text-align: center; margin-bottom: 1.25rem; }
 
-  /* Transfer button between rows */
-  .transfer-row {
-    text-align: center;
-    margin-bottom: 1.25rem;
+  /* Text stego specific */
+  .text-section { margin-bottom: 1.25rem; }
+  .text-section h3 {
+    font-size: 0.95rem;
+    color: #ccc;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .method-label {
+    display: inline-block;
+    font-size: 0.65rem;
+    padding: 0.2em 0.5em;
+    border-radius: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .method-label.homoglyph { background: #4a1942; color: #e879f9; }
+  .method-label.synonym { background: #422006; color: #fb923c; }
+  .method-label.zwc { background: #1e3a5f; color: #60a5fa; }
+
+  .two-col {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .two-col > div { flex: 1; min-width: 250px; }
+
+  .stego-output {
+    width: 100%;
+    min-height: 80px;
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: #e0e0e0;
+    padding: 0.65rem;
+    font-family: inherit;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+  }
+  .highlight-homo { background: #4a1942; color: #e879f9; border-radius: 2px; padding: 0 1px; }
+  .highlight-syn { background: #422006; color: #fb923c; border-radius: 2px; padding: 0 1px; }
+
+  .codebook-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+  }
+  .codebook-table th {
+    text-align: left;
+    padding: 0.35rem 0.6rem;
+    border-bottom: 1px solid #444;
+    color: #888;
+    font-weight: 500;
+  }
+  .codebook-table td {
+    padding: 0.3rem 0.6rem;
+    border-bottom: 1px solid #222;
+    color: #ccc;
+  }
+  .codebook-table code {
+    background: #222;
+    padding: 0.1em 0.3em;
+    border-radius: 3px;
+    font-size: 0.75rem;
+  }
+  .bit-display {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 0.8rem;
+    color: #60a5fa;
+    margin-top: 0.3rem;
+    word-break: break-all;
   }
 
   @media (max-width: 700px) {
     .row-content { flex-direction: column; }
-    .arrow { transform: rotate(90deg); }
     .col { min-width: unset; }
+    .tabs { overflow-x: auto; }
+    .tab { padding: 0.6rem 1rem; font-size: 0.85rem; }
   }
 </style>
 </head>
 <body>
 
 <div class="container">
-  <h1>LSB Steganography</h1>
-  <p class="subtitle">Hide secret messages inside images by modifying the least significant bit of each pixel</p>
+  <h1>Steganography Demo</h1>
+  <p class="subtitle">Hide secret messages in plain sight &mdash; inside images or text</p>
 
-  <!-- Explanation -->
-  <div class="panel">
-    <h2>How It Works</h2>
-    <div class="how-it-works">
-      <p><strong>Encoding:</strong> Your message is converted to binary. Each bit replaces the least significant bit
-      of one color channel (R, G, or B) across successive pixels. A 32-bit length header is stored first.
-      The change to each pixel is at most &plusmn;1 &mdash; invisible to the naked eye.</p>
-      <p style="margin-top:0.4rem"><strong>Decoding:</strong> The LSBs are read back in order. The length header tells how many
-      bytes to extract, then those bits are reassembled into text.</p>
-      <p style="margin-top:0.4rem"><strong>Capacity:</strong> Each pixel stores 3 bits (one per RGB channel).
-      A <code>W&times;H</code> image holds <code>floor(W&times;H&times;3/8) - 4</code> bytes.</p>
+  <!-- Tab navigation -->
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('image')">Image (LSB)</div>
+    <div class="tab" onclick="switchTab('text')">Text Steganography</div>
+  </div>
+
+  <!-- ==================== IMAGE TAB ==================== -->
+  <div class="tab-content active" id="tab-image">
+    <div class="panel">
+      <h2>How Image LSB Steganography Works</h2>
+      <div class="how-it-works">
+        <p><strong>Encoding:</strong> Your message is converted to binary. Each bit replaces the least significant bit
+        of one color channel (R, G, or B) across successive pixels. A 32-bit length header is stored first.
+        The change to each pixel is at most &plusmn;1 &mdash; invisible to the naked eye.</p>
+        <p style="margin-top:0.4rem"><strong>Decoding:</strong> The LSBs are read back in order. The length header tells how many
+        bytes to extract, then those bits are reassembled into text.</p>
+        <p style="margin-top:0.4rem"><strong>Capacity:</strong> Each pixel stores 3 bits (one per RGB channel).
+        A <code>W&times;H</code> image holds <code>floor(W&times;H&times;3/8) - 4</code> bytes.</p>
+      </div>
+    </div>
+
+    <!-- Row 1: Encode -->
+    <div class="row-panel">
+      <h2><span class="row-label encode">Encode</span> Hide a message in an image</h2>
+      <div class="row-content">
+        <div class="col">
+          <label>Source Image</label>
+          <canvas id="srcCanvas" width="400" height="300"></canvas>
+          <div class="btn-row">
+            <label class="file-label" for="srcUpload">Upload</label>
+            <input type="file" id="srcUpload" accept="image/*">
+            <button class="btn-secondary" onclick="loadDefault()">Reset Default</button>
+          </div>
+          <div class="capacity" id="capacityInfo"></div>
+        </div>
+        <div class="col" style="flex: 0.8;">
+          <label>Secret Message</label>
+          <textarea id="encodeInput" placeholder="Type your secret message here..."></textarea>
+          <div class="btn-row">
+            <button class="btn-encode" onclick="imgEncode()">Encode &rarr;</button>
+          </div>
+        </div>
+        <div class="col">
+          <label>Stego Image (output)</label>
+          <canvas id="encOutCanvas" width="400" height="300"></canvas>
+          <div class="btn-row">
+            <button class="btn-download" id="downloadBtn" onclick="imgDownload()" disabled>Download PNG</button>
+          </div>
+        </div>
+      </div>
+      <div class="status" id="encodeStatus"></div>
+    </div>
+
+    <div class="transfer-row">
+      <button class="btn-transfer" id="transferBtn" onclick="imgTransfer()" disabled>
+        &darr;&darr; Load encoded image into decoder &darr;&darr;
+      </button>
+    </div>
+
+    <!-- Row 2: Decode -->
+    <div class="row-panel">
+      <h2><span class="row-label decode">Decode</span> Extract a hidden message from an image</h2>
+      <div class="row-content">
+        <div class="col">
+          <label>Stego Image (input)</label>
+          <canvas id="decInCanvas" width="400" height="300"></canvas>
+          <div class="btn-row">
+            <label class="file-label" for="stegoUpload">Upload Stego Image</label>
+            <input type="file" id="stegoUpload" accept="image/*">
+          </div>
+        </div>
+        <div class="col-mid">
+          <button class="btn-decode" id="decodeBtn" onclick="imgDecode()" disabled>Decode &rarr;</button>
+        </div>
+        <div class="col">
+          <label>Extracted Message</label>
+          <textarea id="decodeOutput" placeholder="Decoded message will appear here..." readonly></textarea>
+        </div>
+      </div>
+      <div class="status" id="decodeStatus"></div>
     </div>
   </div>
 
-  <!-- Row 1: Encode -->
-  <div class="row-panel">
-    <h2><span class="row-label encode">Encode</span> Hide a message in an image</h2>
-    <div class="row-content">
-      <div class="col">
-        <label>Source Image</label>
-        <canvas id="srcCanvas" width="400" height="300"></canvas>
-        <div class="btn-row">
-          <label class="file-label" for="srcUpload">Upload</label>
-          <input type="file" id="srcUpload" accept="image/*">
-          <button class="btn-secondary" onclick="loadDefault()">Reset Default</button>
-        </div>
-        <div class="capacity" id="capacityInfo"></div>
-      </div>
-      <div class="col" style="flex: 0.8;">
-        <label>Secret Message</label>
-        <textarea id="encodeInput" placeholder="Type your secret message here..."></textarea>
-        <div class="btn-row">
-          <button class="btn-encode" onclick="encode()">Encode &rarr;</button>
-        </div>
-      </div>
-      <div class="col">
-        <label>Stego Image (output)</label>
-        <canvas id="encOutCanvas" width="400" height="300"></canvas>
-        <div class="btn-row">
-          <button class="btn-download" id="downloadBtn" onclick="downloadImage()" disabled>Download PNG</button>
-        </div>
+  <!-- ==================== TEXT TAB ==================== -->
+  <div class="tab-content" id="tab-text">
+    <div class="panel">
+      <h2>How Text Steganography Works</h2>
+      <div class="how-it-works">
+        <p>Instead of hiding data in pixels, text steganography hides messages <em>within ordinary-looking text</em>.
+        The cover text reads naturally, but carries a hidden payload. Below are three techniques &mdash; from invisible to
+        linguistically creative.</p>
       </div>
     </div>
-    <div class="status" id="encodeStatus"></div>
-  </div>
 
-  <!-- Transfer button -->
-  <div class="transfer-row">
-    <button class="btn-transfer" id="transferBtn" onclick="transferImage()" disabled>
-      &darr;&darr; Load encoded image into decoder &darr;&darr;
-    </button>
-  </div>
-
-  <!-- Row 2: Decode -->
-  <div class="row-panel">
-    <h2><span class="row-label decode">Decode</span> Extract a hidden message from an image</h2>
-    <div class="row-content">
-      <div class="col">
-        <label>Stego Image (input)</label>
-        <canvas id="decInCanvas" width="400" height="300"></canvas>
-        <div class="btn-row">
-          <label class="file-label" for="stegoUpload">Upload Stego Image</label>
-          <input type="file" id="stegoUpload" accept="image/*">
+    <!-- ===== Zero-Width Characters ===== -->
+    <div class="row-panel">
+      <h2><span class="method-label zwc">Zero-Width Chars</span> Invisible characters between letters</h2>
+      <div class="how-it-works" style="margin-bottom:1rem">
+        <p>Unicode defines characters with no visible width: <strong>zero-width space</strong> (<code>U+200B</code>) and
+        <strong>zero-width non-joiner</strong> (<code>U+200C</code>). We encode each bit of the secret as one of these
+        characters and insert them between the letters of cover text. The text looks identical but its byte content is different.
+        This is the most practical text steganography method &mdash; high capacity and truly invisible.</p>
+      </div>
+      <div class="text-section">
+        <h3><span class="row-label encode">Encode</span></h3>
+        <div class="two-col">
+          <div>
+            <label class="field-label">Cover Text (carrier)</label>
+            <textarea id="zwcCover" placeholder="Enter innocent-looking cover text...">The quick brown fox jumps over the lazy dog near the riverbank on a warm sunny afternoon while birds sing in the tall oak trees and clouds drift slowly across the bright blue sky above the peaceful meadow</textarea>
+          </div>
+          <div>
+            <label class="field-label">Secret Message</label>
+            <textarea id="zwcSecret" placeholder="Message to hide...">Hello!</textarea>
+          </div>
         </div>
+        <div class="btn-row" style="justify-content: flex-start;">
+          <button class="btn-encode" onclick="zwcEncode()">Encode</button>
+        </div>
+        <div style="margin-top:0.75rem">
+          <label class="field-label">Stego Text (copy this &mdash; looks the same, but isn't!)</label>
+          <textarea id="zwcOutput" readonly placeholder="Encoded text appears here..."></textarea>
+          <div class="btn-row" style="justify-content: flex-start;">
+            <button class="btn-secondary" onclick="copyText('zwcOutput')">Copy to Clipboard</button>
+            <button class="btn-transfer" onclick="zwcLoadToDecode()">Load into Decoder &darr;</button>
+          </div>
+        </div>
+        <div class="status" id="zwcEncodeStatus"></div>
       </div>
-      <div class="col-mid">
-        <button class="btn-decode" id="decodeBtn" onclick="decode()" disabled>Decode &rarr;</button>
-      </div>
-      <div class="col">
-        <label>Extracted Message</label>
-        <textarea id="decodeOutput" placeholder="Decoded message will appear here..." readonly></textarea>
+      <hr style="border:none; border-top:1px solid #333; margin: 1rem 0;">
+      <div class="text-section">
+        <h3><span class="row-label decode">Decode</span></h3>
+        <label class="field-label">Paste stego text here</label>
+        <textarea id="zwcDecodeInput" placeholder="Paste text containing zero-width characters..."></textarea>
+        <div class="btn-row" style="justify-content: flex-start;">
+          <button class="btn-decode" onclick="zwcDecode()">Decode</button>
+        </div>
+        <div style="margin-top:0.75rem">
+          <label class="field-label">Extracted Message</label>
+          <textarea id="zwcDecodeOutput" readonly placeholder="Hidden message appears here..."></textarea>
+          <label class="field-label" style="margin-top:0.5rem">Binary Payload</label>
+          <div class="bit-display" id="zwcBits"></div>
+        </div>
+        <div class="status" id="zwcDecodeStatus"></div>
       </div>
     </div>
-    <div class="status" id="decodeStatus"></div>
+
+    <!-- ===== Homoglyph Substitution ===== -->
+    <div class="row-panel">
+      <h2><span class="method-label homoglyph">Homoglyphs</span> Visually identical character swaps</h2>
+      <div class="how-it-works" style="margin-bottom:1rem">
+        <p>Many Unicode characters look identical but have different code points. For example, Latin <code>a</code>
+        (<code>U+0061</code>) and Cyrillic <code>&#1072;</code> (<code>U+0430</code>) are visually indistinguishable
+        in most fonts. By choosing Latin = <strong>0</strong> or Cyrillic = <strong>1</strong> for each eligible letter,
+        we can encode a binary message. The text reads normally but carries hidden bits.</p>
+        <p style="margin-top:0.4rem"><strong>Codebook:</strong></p>
+        <table class="codebook-table">
+          <tr><th>Letter</th><th>Bit 0 (Latin)</th><th>Bit 1 (Cyrillic)</th></tr>
+          <tr><td>a</td><td><code>a</code> U+0061</td><td><code>&#1072;</code> U+0430</td></tr>
+          <tr><td>c</td><td><code>c</code> U+0063</td><td><code>&#1089;</code> U+0441</td></tr>
+          <tr><td>e</td><td><code>e</code> U+0065</td><td><code>&#1077;</code> U+0435</td></tr>
+          <tr><td>o</td><td><code>o</code> U+006F</td><td><code>&#1086;</code> U+043E</td></tr>
+          <tr><td>p</td><td><code>p</code> U+0070</td><td><code>&#1088;</code> U+0440</td></tr>
+          <tr><td>s</td><td><code>s</code> U+0073</td><td><code>&#1109;</code> U+0455</td></tr>
+          <tr><td>x</td><td><code>x</code> U+0078</td><td><code>&#1093;</code> U+0445</td></tr>
+          <tr><td>y</td><td><code>y</code> U+0079</td><td><code>&#1091;</code> U+0443</td></tr>
+        </table>
+      </div>
+      <div class="text-section">
+        <h3><span class="row-label encode">Encode</span></h3>
+        <div class="two-col">
+          <div>
+            <label class="field-label">Cover Text</label>
+            <textarea id="homoCover" placeholder="Enter cover text (needs letters a,c,e,o,p,s,x,y)...">The explorer crossed the open prairies, eyes scanning the peaceful countryside. A cozy cottage appeared beyond the cypress trees, smoke curling above its stone chimney. She paused to appreciate the serene atmosphere, contemplating the extraordinary scope of the expansive landscape that stretched across the horizon.</textarea>
+          </div>
+          <div>
+            <label class="field-label">Secret Message</label>
+            <textarea id="homoSecret" placeholder="Message to hide..." style="min-height:60px">Hi</textarea>
+            <div class="bit-display" id="homoBitsNeeded" style="margin-top:0.3rem"></div>
+          </div>
+        </div>
+        <div class="btn-row" style="justify-content: flex-start;">
+          <button class="btn-encode" onclick="homoEncode()">Encode</button>
+        </div>
+        <div style="margin-top:0.75rem">
+          <label class="field-label">Stego Text (swapped characters <span class="highlight-homo">highlighted</span>)</label>
+          <div class="stego-output" id="homoOutput"></div>
+          <div class="btn-row" style="justify-content: flex-start;">
+            <button class="btn-secondary" onclick="copyInnerText('homoOutput')">Copy to Clipboard</button>
+            <button class="btn-transfer" onclick="homoLoadToDecode()">Load into Decoder &darr;</button>
+          </div>
+        </div>
+        <div class="status" id="homoEncodeStatus"></div>
+      </div>
+      <hr style="border:none; border-top:1px solid #333; margin: 1rem 0;">
+      <div class="text-section">
+        <h3><span class="row-label decode">Decode</span></h3>
+        <label class="field-label">Paste stego text</label>
+        <textarea id="homoDecodeInput" placeholder="Paste text with homoglyph substitutions..."></textarea>
+        <div class="btn-row" style="justify-content: flex-start;">
+          <button class="btn-decode" onclick="homoDecode()">Decode</button>
+        </div>
+        <div style="margin-top:0.75rem">
+          <label class="field-label">Extracted Message</label>
+          <textarea id="homoDecodeOutput" readonly placeholder="Hidden message appears here..."></textarea>
+          <label class="field-label" style="margin-top:0.5rem">Detected Bits</label>
+          <div class="bit-display" id="homoDecodeBits"></div>
+        </div>
+        <div class="status" id="homoDecodeStatus"></div>
+      </div>
+    </div>
+
+    <!-- ===== Synonym Substitution ===== -->
+    <div class="row-panel">
+      <h2><span class="method-label synonym">Synonyms</span> Word choice encodes hidden bits</h2>
+      <div class="how-it-works" style="margin-bottom:1rem">
+        <p>Each pair of synonyms represents a single bit: one word = <strong>0</strong>, the other = <strong>1</strong>.
+        By writing a sentence and choosing specific words from the codebook, you can spell out a binary message.
+        This is lower capacity but fascinating &mdash; the secret is in the <em>word choice itself</em>.</p>
+        <p style="margin-top:0.4rem"><strong>Codebook:</strong></p>
+        <table class="codebook-table">
+          <tr><th>Bit 0</th><th>Bit 1</th><th></th><th>Bit 0</th><th>Bit 1</th></tr>
+          <tr><td>big</td><td>large</td><td></td><td>begin</td><td>start</td></tr>
+          <tr><td>fast</td><td>quick</td><td></td><td>end</td><td>finish</td></tr>
+          <tr><td>happy</td><td>glad</td><td></td><td>small</td><td>tiny</td></tr>
+          <tr><td>sad</td><td>unhappy</td><td></td><td>smart</td><td>clever</td></tr>
+          <tr><td>hard</td><td>difficult</td><td></td><td>easy</td><td>simple</td></tr>
+          <tr><td>nice</td><td>pleasant</td><td></td><td>pretty</td><td>beautiful</td></tr>
+          <tr><td>cold</td><td>freezing</td><td></td><td>hot</td><td>boiling</td></tr>
+          <tr><td>old</td><td>ancient</td><td></td><td>new</td><td>fresh</td></tr>
+          <tr><td>loud</td><td>noisy</td><td></td><td>quiet</td><td>silent</td></tr>
+          <tr><td>weird</td><td>strange</td><td></td><td>sure</td><td>certain</td></tr>
+          <tr><td>woods</td><td>forest</td><td></td><td>road</td><td>path</td></tr>
+          <tr><td>house</td><td>home</td><td></td><td>rock</td><td>stone</td></tr>
+          <tr><td>creek</td><td>stream</td><td></td><td>ship</td><td>vessel</td></tr>
+        </table>
+      </div>
+      <div class="text-section">
+        <h3><span class="row-label encode">Encode</span></h3>
+        <div class="two-col">
+          <div>
+            <label class="field-label">Cover Text (use words from the codebook)</label>
+            <textarea id="synCover" placeholder="Write a sentence using codebook words...">The big old house sat at the end of a quiet road near the cold creek in the woods. It was a pretty nice place, sure, but hard to find and far from the new loud ship at the hot fast port. A small smart happy sad easy weird rock sat by the creek.</textarea>
+          </div>
+          <div>
+            <label class="field-label">Secret Message</label>
+            <textarea id="synSecret" placeholder="Message to hide..." style="min-height:60px">Hi</textarea>
+            <div class="bit-display" id="synBitsNeeded" style="margin-top:0.3rem"></div>
+          </div>
+        </div>
+        <div class="btn-row" style="justify-content: flex-start;">
+          <button class="btn-encode" onclick="synEncode()">Encode</button>
+        </div>
+        <div style="margin-top:0.75rem">
+          <label class="field-label">Stego Text (substituted words <span class="highlight-syn">highlighted</span>)</label>
+          <div class="stego-output" id="synOutput"></div>
+          <div class="btn-row" style="justify-content: flex-start;">
+            <button class="btn-secondary" onclick="copyInnerText('synOutput')">Copy to Clipboard</button>
+            <button class="btn-transfer" onclick="synLoadToDecode()">Load into Decoder &darr;</button>
+          </div>
+        </div>
+        <div class="status" id="synEncodeStatus"></div>
+      </div>
+      <hr style="border:none; border-top:1px solid #333; margin: 1rem 0;">
+      <div class="text-section">
+        <h3><span class="row-label decode">Decode</span></h3>
+        <label class="field-label">Paste stego text</label>
+        <textarea id="synDecodeInput" placeholder="Paste text with synonym substitutions..."></textarea>
+        <div class="btn-row" style="justify-content: flex-start;">
+          <button class="btn-decode" onclick="synDecode()">Decode</button>
+        </div>
+        <div style="margin-top:0.75rem">
+          <label class="field-label">Extracted Message</label>
+          <textarea id="synDecodeOutput" readonly placeholder="Hidden message appears here..."></textarea>
+          <label class="field-label" style="margin-top:0.5rem">Detected Bits</label>
+          <div class="bit-display" id="synDecodeBits"></div>
+        </div>
+        <div class="status" id="synDecodeStatus"></div>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
+// ==================== TAB SWITCHING ====================
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    t.classList.toggle('active', (name === 'image' && i === 0) || (name === 'text' && i === 1));
+  });
+  document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+// ==================== IMAGE STEGANOGRAPHY ====================
 const srcCanvas = document.getElementById('srcCanvas');
 const encOutCanvas = document.getElementById('encOutCanvas');
 const decInCanvas = document.getElementById('decInCanvas');
 const srcCtx = srcCanvas.getContext('2d');
 const encOutCtx = encOutCanvas.getContext('2d');
 const decInCtx = decInCanvas.getContext('2d');
-const encodeInput = document.getElementById('encodeInput');
-const decodeOutput = document.getElementById('decodeOutput');
-const encodeStatusEl = document.getElementById('encodeStatus');
-const decodeStatusEl = document.getElementById('decodeStatus');
 const downloadBtn = document.getElementById('downloadBtn');
 const transferBtn = document.getElementById('transferBtn');
 const decodeBtnEl = document.getElementById('decodeBtn');
@@ -318,25 +614,21 @@ function loadDefault() {
   img.onload = function() {
     sourceImageData = loadImageToCanvas(img, srcCanvas, srcCtx);
     updateCapacity(srcCanvas.width, srcCanvas.height);
-    // Reset encode output
     encOutCanvas.width = srcCanvas.width;
     encOutCanvas.height = srcCanvas.height;
     drawPlaceholder(encOutCanvas, encOutCtx, 'Encoded image will appear here');
     hasEncodedImage = false;
     downloadBtn.disabled = true;
     transferBtn.disabled = true;
-    setStatus(encodeStatusEl, '', '');
+    setStatus(document.getElementById('encodeStatus'), '', '');
   };
   img.onerror = function() {
-    // Fallback: draw a procedural sunflower
     const w = 400, h = 300;
     srcCanvas.width = w; srcCanvas.height = h;
     const grad = srcCtx.createLinearGradient(0, 0, 0, h);
     grad.addColorStop(0, '#4a90d9'); grad.addColorStop(0.6, '#87ceeb');
     grad.addColorStop(0.6, '#228b22'); grad.addColorStop(1, '#1a6b1a');
     srcCtx.fillStyle = grad; srcCtx.fillRect(0, 0, w, h);
-    srcCtx.strokeStyle = '#2d5a1e'; srcCtx.lineWidth = 6;
-    srcCtx.beginPath(); srcCtx.moveTo(200,180); srcCtx.quadraticCurveTo(195,230,200,300); srcCtx.stroke();
     const cx = 200, cy = 120;
     for (let i = 0; i < 14; i++) {
       const a = (i/14)*Math.PI*2;
@@ -352,9 +644,7 @@ function loadDefault() {
     updateCapacity(w, h);
     encOutCanvas.width = w; encOutCanvas.height = h;
     drawPlaceholder(encOutCanvas, encOutCtx, 'Encoded image will appear here');
-    hasEncodedImage = false;
-    downloadBtn.disabled = true;
-    transferBtn.disabled = true;
+    hasEncodedImage = false; downloadBtn.disabled = true; transferBtn.disabled = true;
   };
   img.src = DEFAULT_IMAGE_URL;
 }
@@ -379,10 +669,8 @@ document.getElementById('srcUpload').addEventListener('change', function(e) {
       updateCapacity(w, h);
       encOutCanvas.width = w; encOutCanvas.height = h;
       drawPlaceholder(encOutCanvas, encOutCtx, 'Encoded image will appear here');
-      hasEncodedImage = false;
-      downloadBtn.disabled = true;
-      transferBtn.disabled = true;
-      setStatus(encodeStatusEl, '', '');
+      hasEncodedImage = false; downloadBtn.disabled = true; transferBtn.disabled = true;
+      setStatus(document.getElementById('encodeStatus'), '', '');
     });
   }
 });
@@ -392,132 +680,404 @@ document.getElementById('stegoUpload').addEventListener('change', function(e) {
     handleImageUpload(e.target.files[0], decInCanvas, decInCtx, function() {
       hasDecodeImage = true;
       decodeBtnEl.disabled = false;
-      setStatus(decodeStatusEl, 'Stego image loaded. Click Decode to extract the message.', 'info');
+      setStatus(document.getElementById('decodeStatus'), 'Stego image loaded. Click Decode.', 'info');
     });
   }
 });
 
-function encode() {
-  if (!sourceImageData) {
-    setStatus(encodeStatusEl, 'Please load a source image first.', 'error');
-    return;
-  }
-  const msg = encodeInput.value;
-  if (!msg) {
-    setStatus(encodeStatusEl, 'Please enter a message to encode.', 'error');
-    return;
-  }
-
+function imgEncode() {
+  if (!sourceImageData) { setStatus(document.getElementById('encodeStatus'), 'Load a source image first.', 'error'); return; }
+  const msg = document.getElementById('encodeInput').value;
+  if (!msg) { setStatus(document.getElementById('encodeStatus'), 'Enter a message to encode.', 'error'); return; }
   const encoder = new TextEncoder();
   const msgBytes = encoder.encode(msg);
   const msgLen = msgBytes.length;
-
   const w = srcCanvas.width, h = srcCanvas.height;
   const totalBits = w * h * 3;
   const neededBits = (4 + msgLen) * 8;
-
-  if (neededBits > totalBits) {
-    setStatus(encodeStatusEl, `Message too long! Need ${neededBits} bits but image only has ${totalBits}.`, 'error');
-    return;
-  }
-
-  encOutCanvas.width = w;
-  encOutCanvas.height = h;
+  if (neededBits > totalBits) { setStatus(document.getElementById('encodeStatus'), `Message too long! Need ${neededBits} bits, image has ${totalBits}.`, 'error'); return; }
+  encOutCanvas.width = w; encOutCanvas.height = h;
   const outData = encOutCtx.createImageData(w, h);
-  const src = sourceImageData.data;
-  const dst = outData.data;
+  const src = sourceImageData.data, dst = outData.data;
   for (let i = 0; i < src.length; i++) dst[i] = src[i];
-
   const allBytes = new Uint8Array(4 + msgLen);
-  allBytes[0] = (msgLen >> 24) & 0xff;
-  allBytes[1] = (msgLen >> 16) & 0xff;
-  allBytes[2] = (msgLen >> 8) & 0xff;
-  allBytes[3] = msgLen & 0xff;
+  allBytes[0] = (msgLen >> 24) & 0xff; allBytes[1] = (msgLen >> 16) & 0xff;
+  allBytes[2] = (msgLen >> 8) & 0xff; allBytes[3] = msgLen & 0xff;
   allBytes.set(msgBytes, 4);
-
   let bitIdx = 0;
   for (let i = 0; i < allBytes.length; i++) {
     for (let b = 7; b >= 0; b--) {
       const bit = (allBytes[i] >> b) & 1;
-      const pixelIdx = Math.floor(bitIdx / 3);
-      const channelOffset = bitIdx % 3;
-      const dataIdx = pixelIdx * 4 + channelOffset;
-      dst[dataIdx] = (dst[dataIdx] & 0xfe) | bit;
+      const px = Math.floor(bitIdx / 3), ch = bitIdx % 3;
+      dst[px * 4 + ch] = (dst[px * 4 + ch] & 0xfe) | bit;
       bitIdx++;
     }
   }
-
   encOutCtx.putImageData(outData, 0, 0);
-  hasEncodedImage = true;
-  downloadBtn.disabled = false;
-  transferBtn.disabled = false;
-  setStatus(encodeStatusEl, `Encoded ${msgLen} bytes (${neededBits} bits used) into the image.`, 'success');
+  hasEncodedImage = true; downloadBtn.disabled = false; transferBtn.disabled = false;
+  setStatus(document.getElementById('encodeStatus'), `Encoded ${msgLen} bytes (${neededBits} bits) into the image.`, 'success');
 }
 
-function decode() {
+function imgDecode() {
   const w = decInCanvas.width, h = decInCanvas.height;
-  if (!hasDecodeImage || w === 0 || h === 0) {
-    setStatus(decodeStatusEl, 'No stego image loaded. Upload one or transfer from the encoder.', 'error');
-    return;
-  }
-
-  const imgData = decInCtx.getImageData(0, 0, w, h);
-  const data = imgData.data;
+  if (!hasDecodeImage || !w || !h) { setStatus(document.getElementById('decodeStatus'), 'No stego image loaded.', 'error'); return; }
+  const data = decInCtx.getImageData(0, 0, w, h).data;
   const totalBits = w * h * 3;
-
-  if (totalBits < 32) {
-    setStatus(decodeStatusEl, 'Image too small to contain a message.', 'error');
-    return;
-  }
-
-  function readBits(startBit, count) {
+  function readBits(start, count) {
     const bytes = new Uint8Array(Math.ceil(count / 8));
     for (let i = 0; i < count; i++) {
-      const bitIdx = startBit + i;
-      const pixelIdx = Math.floor(bitIdx / 3);
-      const channelOffset = bitIdx % 3;
-      const dataIdx = pixelIdx * 4 + channelOffset;
-      const bit = data[dataIdx] & 1;
-      bytes[Math.floor(i / 8)] |= (bit << (7 - (i % 8)));
+      const bi = start + i, px = Math.floor(bi / 3), ch = bi % 3;
+      bytes[Math.floor(i / 8)] |= ((data[px * 4 + ch] & 1) << (7 - (i % 8)));
     }
     return bytes;
   }
-
-  const lenBytes = readBits(0, 32);
-  const msgLen = (lenBytes[0] << 24) | (lenBytes[1] << 16) | (lenBytes[2] << 8) | lenBytes[3];
-
+  const lb = readBits(0, 32);
+  const msgLen = (lb[0] << 24) | (lb[1] << 16) | (lb[2] << 8) | lb[3];
   if (msgLen <= 0 || msgLen > Math.floor((totalBits - 32) / 8)) {
-    setStatus(decodeStatusEl, 'No valid hidden message found (invalid length header).', 'error');
-    decodeOutput.value = '';
+    setStatus(document.getElementById('decodeStatus'), 'No valid hidden message found.', 'error');
+    document.getElementById('decodeOutput').value = ''; return;
+  }
+  document.getElementById('decodeOutput').value = new TextDecoder().decode(readBits(32, msgLen * 8));
+  setStatus(document.getElementById('decodeStatus'), `Decoded ${msgLen} bytes.`, 'success');
+}
+
+function imgTransfer() {
+  if (!hasEncodedImage) return;
+  decInCanvas.width = encOutCanvas.width; decInCanvas.height = encOutCanvas.height;
+  decInCtx.putImageData(encOutCtx.getImageData(0, 0, encOutCanvas.width, encOutCanvas.height), 0, 0);
+  hasDecodeImage = true; decodeBtnEl.disabled = false;
+  document.getElementById('decodeOutput').value = '';
+  setStatus(document.getElementById('decodeStatus'), 'Stego image loaded from encoder. Click Decode.', 'info');
+}
+
+function imgDownload() {
+  const a = document.createElement('a');
+  a.download = 'stego_image.png';
+  a.href = encOutCanvas.toDataURL('image/png');
+  a.click();
+}
+
+// ==================== UTILITY ====================
+function textToBits(text) {
+  const bytes = new TextEncoder().encode(text);
+  let bits = [];
+  for (const byte of bytes) {
+    for (let b = 7; b >= 0; b--) bits.push((byte >> b) & 1);
+  }
+  return bits;
+}
+
+function bitsToText(bits) {
+  // Pad to multiple of 8
+  while (bits.length % 8 !== 0) bits.push(0);
+  const bytes = new Uint8Array(bits.length / 8);
+  for (let i = 0; i < bytes.length; i++) {
+    let val = 0;
+    for (let b = 0; b < 8; b++) val = (val << 1) | bits[i * 8 + b];
+    bytes[i] = val;
+  }
+  return new TextDecoder().decode(bytes);
+}
+
+function copyText(id) {
+  const el = document.getElementById(id);
+  navigator.clipboard.writeText(el.value);
+}
+
+function copyInnerText(id) {
+  const el = document.getElementById(id);
+  navigator.clipboard.writeText(el.innerText);
+}
+
+// ==================== ZERO-WIDTH CHARACTERS ====================
+const ZWC_ZERO = '\u200B'; // zero-width space
+const ZWC_ONE  = '\u200C'; // zero-width non-joiner
+
+function zwcEncode() {
+  const cover = document.getElementById('zwcCover').value;
+  const secret = document.getElementById('zwcSecret').value;
+  const statusEl = document.getElementById('zwcEncodeStatus');
+  if (!cover) { setStatus(statusEl, 'Enter cover text.', 'error'); return; }
+  if (!secret) { setStatus(statusEl, 'Enter a secret message.', 'error'); return; }
+
+  const bits = textToBits(secret);
+  // We insert one ZWC between each pair of visible characters
+  const visibleChars = [...cover];
+  const slots = visibleChars.length - 1;
+  if (bits.length > slots) {
+    setStatus(statusEl, `Need ${bits.length} slots but cover text only has ${slots} (${visibleChars.length} chars). Add more cover text.`, 'error');
     return;
   }
 
-  const msgBytes = readBits(32, msgLen * 8);
-  const decoder = new TextDecoder();
-  decodeOutput.value = decoder.decode(msgBytes);
-  setStatus(decodeStatusEl, `Decoded ${msgLen} bytes from the image.`, 'success');
+  let result = visibleChars[0];
+  for (let i = 1; i < visibleChars.length; i++) {
+    const bitIndex = i - 1;
+    if (bitIndex < bits.length) {
+      result += bits[bitIndex] ? ZWC_ONE : ZWC_ZERO;
+    }
+    result += visibleChars[i];
+  }
+
+  document.getElementById('zwcOutput').value = result;
+  setStatus(statusEl, `Encoded ${secret.length} chars (${bits.length} bits) into ${visibleChars.length}-char cover text. The output looks identical!`, 'success');
 }
 
-function transferImage() {
-  if (!hasEncodedImage) return;
-  decInCanvas.width = encOutCanvas.width;
-  decInCanvas.height = encOutCanvas.height;
-  const imgData = encOutCtx.getImageData(0, 0, encOutCanvas.width, encOutCanvas.height);
-  decInCtx.putImageData(imgData, 0, 0);
-  hasDecodeImage = true;
-  decodeBtnEl.disabled = false;
-  decodeOutput.value = '';
-  setStatus(decodeStatusEl, 'Stego image loaded from encoder. Click Decode to extract.', 'info');
+function zwcLoadToDecode() {
+  document.getElementById('zwcDecodeInput').value = document.getElementById('zwcOutput').value;
+  document.getElementById('zwcDecodeOutput').value = '';
+  document.getElementById('zwcBits').textContent = '';
+  setStatus(document.getElementById('zwcDecodeStatus'), 'Stego text loaded. Click Decode.', 'info');
 }
 
-function downloadImage() {
-  const link = document.createElement('a');
-  link.download = 'stego_image.png';
-  link.href = encOutCanvas.toDataURL('image/png');
-  link.click();
+function zwcDecode() {
+  const text = document.getElementById('zwcDecodeInput').value;
+  const statusEl = document.getElementById('zwcDecodeStatus');
+  if (!text) { setStatus(statusEl, 'Paste stego text first.', 'error'); return; }
+
+  const bits = [];
+  for (const ch of text) {
+    if (ch === ZWC_ZERO) bits.push(0);
+    else if (ch === ZWC_ONE) bits.push(1);
+  }
+
+  if (bits.length === 0) {
+    setStatus(statusEl, 'No zero-width characters found in this text.', 'error');
+    document.getElementById('zwcDecodeOutput').value = '';
+    document.getElementById('zwcBits').textContent = '';
+    return;
+  }
+
+  const msg = bitsToText(bits);
+  document.getElementById('zwcDecodeOutput').value = msg;
+  document.getElementById('zwcBits').textContent = bits.join('');
+  setStatus(statusEl, `Found ${bits.length} hidden bits, decoded ${Math.floor(bits.length / 8)} bytes.`, 'success');
 }
 
-// Init
+// ==================== HOMOGLYPH STEGANOGRAPHY ====================
+// Latin → Cyrillic lookalikes
+const HOMO_MAP = {
+  'a': '\u0430', 'c': '\u0441', 'e': '\u0435', 'o': '\u043E',
+  'p': '\u0440', 's': '\u0455', 'x': '\u0445', 'y': '\u0443'
+};
+// Reverse: Cyrillic code point → Latin letter
+const HOMO_REVERSE = {};
+for (const [latin, cyrillic] of Object.entries(HOMO_MAP)) {
+  HOMO_REVERSE[cyrillic] = latin;
+}
+const HOMO_ELIGIBLE = new Set(Object.keys(HOMO_MAP));
+const HOMO_CYRILLIC = new Set(Object.values(HOMO_MAP));
+
+document.getElementById('homoSecret').addEventListener('input', function() {
+  const bits = textToBits(this.value);
+  document.getElementById('homoBitsNeeded').textContent = this.value ? `Needs ${bits.length} bits (${bits.length} eligible letters in cover)` : '';
+});
+
+function homoEncode() {
+  const cover = document.getElementById('homoCover').value;
+  const secret = document.getElementById('homoSecret').value;
+  const statusEl = document.getElementById('homoEncodeStatus');
+  if (!cover) { setStatus(statusEl, 'Enter cover text.', 'error'); return; }
+  if (!secret) { setStatus(statusEl, 'Enter a secret message.', 'error'); return; }
+
+  const bits = textToBits(secret);
+  // Find eligible positions (lowercase letters that have homoglyphs)
+  const chars = [...cover];
+  const eligible = [];
+  for (let i = 0; i < chars.length; i++) {
+    if (HOMO_ELIGIBLE.has(chars[i].toLowerCase()) && chars[i] === chars[i].toLowerCase()) {
+      eligible.push(i);
+    }
+  }
+
+  if (bits.length > eligible.length) {
+    setStatus(statusEl, `Need ${bits.length} eligible letters but cover only has ${eligible.length}. Add more text with a/c/e/o/p/s/x/y.`, 'error');
+    return;
+  }
+
+  const result = [...chars];
+  const swapped = new Set();
+  for (let i = 0; i < bits.length; i++) {
+    const pos = eligible[i];
+    if (bits[i] === 1) {
+      result[pos] = HOMO_MAP[chars[pos].toLowerCase()];
+      swapped.add(pos);
+    }
+  }
+
+  // Build highlighted output
+  const outputEl = document.getElementById('homoOutput');
+  outputEl.innerHTML = '';
+  for (let i = 0; i < result.length; i++) {
+    if (swapped.has(i)) {
+      const span = document.createElement('span');
+      span.className = 'highlight-homo';
+      span.textContent = result[i];
+      span.title = `Cyrillic "${result[i]}" (bit=1)`;
+      outputEl.appendChild(span);
+    } else {
+      outputEl.appendChild(document.createTextNode(result[i]));
+    }
+  }
+
+  setStatus(statusEl, `Encoded ${secret.length} chars (${bits.length} bits) using ${swapped.size} homoglyph swaps across ${eligible.length} eligible positions.`, 'success');
+}
+
+function homoLoadToDecode() {
+  const el = document.getElementById('homoOutput');
+  document.getElementById('homoDecodeInput').value = el.innerText;
+  document.getElementById('homoDecodeOutput').value = '';
+  document.getElementById('homoDecodeBits').textContent = '';
+  setStatus(document.getElementById('homoDecodeStatus'), 'Stego text loaded. Click Decode.', 'info');
+}
+
+function homoDecode() {
+  const text = document.getElementById('homoDecodeInput').value;
+  const statusEl = document.getElementById('homoDecodeStatus');
+  if (!text) { setStatus(statusEl, 'Paste stego text first.', 'error'); return; }
+
+  const bits = [];
+  for (const ch of text) {
+    if (HOMO_ELIGIBLE.has(ch)) {
+      bits.push(0); // Latin = 0
+    } else if (HOMO_CYRILLIC.has(ch)) {
+      bits.push(1); // Cyrillic = 1
+    }
+  }
+
+  if (bits.length === 0) {
+    setStatus(statusEl, 'No eligible letters found.', 'error');
+    document.getElementById('homoDecodeOutput').value = '';
+    document.getElementById('homoDecodeBits').textContent = '';
+    return;
+  }
+
+  // Trim to multiple of 8
+  const usable = bits.slice(0, Math.floor(bits.length / 8) * 8);
+  const msg = bitsToText(usable);
+  document.getElementById('homoDecodeOutput').value = msg;
+  document.getElementById('homoDecodeBits').textContent = bits.join('');
+  setStatus(statusEl, `Found ${bits.length} eligible positions, decoded ${Math.floor(usable.length / 8)} bytes.`, 'success');
+}
+
+// ==================== SYNONYM STEGANOGRAPHY ====================
+const SYNONYM_PAIRS = [
+  ['big', 'large'], ['fast', 'quick'], ['happy', 'glad'], ['sad', 'unhappy'],
+  ['hard', 'difficult'], ['nice', 'pleasant'], ['cold', 'freezing'], ['old', 'ancient'],
+  ['loud', 'noisy'], ['weird', 'strange'], ['woods', 'forest'], ['house', 'home'],
+  ['creek', 'stream'], ['begin', 'start'], ['end', 'finish'], ['small', 'tiny'],
+  ['smart', 'clever'], ['easy', 'simple'], ['pretty', 'beautiful'], ['hot', 'boiling'],
+  ['new', 'fresh'], ['quiet', 'silent'], ['sure', 'certain'], ['road', 'path'],
+  ['rock', 'stone'], ['ship', 'vessel']
+];
+
+// Build lookup: word → { pairIndex, bit }
+const SYN_LOOKUP = {};
+for (let i = 0; i < SYNONYM_PAIRS.length; i++) {
+  SYN_LOOKUP[SYNONYM_PAIRS[i][0].toLowerCase()] = { pair: i, bit: 0 };
+  SYN_LOOKUP[SYNONYM_PAIRS[i][1].toLowerCase()] = { pair: i, bit: 1 };
+}
+
+document.getElementById('synSecret').addEventListener('input', function() {
+  const bits = textToBits(this.value);
+  document.getElementById('synBitsNeeded').textContent = this.value ? `Needs ${bits.length} bits (${bits.length} codebook words in cover)` : '';
+});
+
+function synEncode() {
+  const cover = document.getElementById('synCover').value;
+  const secret = document.getElementById('synSecret').value;
+  const statusEl = document.getElementById('synEncodeStatus');
+  if (!cover) { setStatus(statusEl, 'Enter cover text.', 'error'); return; }
+  if (!secret) { setStatus(statusEl, 'Enter a secret message.', 'error'); return; }
+
+  const bits = textToBits(secret);
+
+  // Tokenize preserving delimiters
+  const tokens = cover.split(/(\b)/);
+  const eligible = [];
+  for (let i = 0; i < tokens.length; i++) {
+    const lower = tokens[i].toLowerCase();
+    if (SYN_LOOKUP[lower] !== undefined) {
+      eligible.push(i);
+    }
+  }
+
+  if (bits.length > eligible.length) {
+    setStatus(statusEl, `Need ${bits.length} codebook words but cover only has ${eligible.length}. Add more sentences with codebook words.`, 'error');
+    return;
+  }
+
+  const result = [...tokens];
+  const swapped = new Set();
+  for (let i = 0; i < bits.length; i++) {
+    const pos = eligible[i];
+    const word = tokens[pos];
+    const lower = word.toLowerCase();
+    const info = SYN_LOOKUP[lower];
+    const pair = SYNONYM_PAIRS[info.pair];
+    const target = bits[i] === 0 ? pair[0] : pair[1];
+    // Preserve capitalization
+    if (word[0] === word[0].toUpperCase()) {
+      result[pos] = target[0].toUpperCase() + target.slice(1);
+    } else {
+      result[pos] = target;
+    }
+    if (result[pos].toLowerCase() !== lower) swapped.add(pos);
+  }
+
+  // Build highlighted output
+  const outputEl = document.getElementById('synOutput');
+  outputEl.innerHTML = '';
+  for (let i = 0; i < result.length; i++) {
+    if (swapped.has(i)) {
+      const span = document.createElement('span');
+      span.className = 'highlight-syn';
+      span.textContent = result[i];
+      span.title = `Swapped from "${tokens[i]}"`;
+      outputEl.appendChild(span);
+    } else {
+      outputEl.appendChild(document.createTextNode(result[i]));
+    }
+  }
+
+  setStatus(statusEl, `Encoded ${secret.length} chars (${bits.length} bits) using ${eligible.length} codebook words (${swapped.size} swapped).`, 'success');
+}
+
+function synLoadToDecode() {
+  document.getElementById('synDecodeInput').value = document.getElementById('synOutput').innerText;
+  document.getElementById('synDecodeOutput').value = '';
+  document.getElementById('synDecodeBits').textContent = '';
+  setStatus(document.getElementById('synDecodeStatus'), 'Stego text loaded. Click Decode.', 'info');
+}
+
+function synDecode() {
+  const text = document.getElementById('synDecodeInput').value;
+  const statusEl = document.getElementById('synDecodeStatus');
+  if (!text) { setStatus(statusEl, 'Paste stego text first.', 'error'); return; }
+
+  const tokens = text.split(/(\b)/);
+  const bits = [];
+  for (const tok of tokens) {
+    const info = SYN_LOOKUP[tok.toLowerCase()];
+    if (info !== undefined) {
+      bits.push(info.bit);
+    }
+  }
+
+  if (bits.length === 0) {
+    setStatus(statusEl, 'No codebook words found in text.', 'error');
+    document.getElementById('synDecodeOutput').value = '';
+    document.getElementById('synDecodeBits').textContent = '';
+    return;
+  }
+
+  const usable = bits.slice(0, Math.floor(bits.length / 8) * 8);
+  const msg = bitsToText(usable);
+  document.getElementById('synDecodeOutput').value = msg;
+  document.getElementById('synDecodeBits').textContent = bits.join('');
+  setStatus(statusEl, `Found ${bits.length} codebook words, decoded ${Math.floor(usable.length / 8)} bytes.`, 'success');
+}
+
+// ==================== INIT ====================
 loadDefault();
 drawPlaceholder(decInCanvas, decInCtx, 'Upload or transfer a stego image');
 </script>
